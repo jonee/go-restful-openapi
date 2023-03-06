@@ -1,7 +1,6 @@
 package restfulspec
 
 import (
-	"log"
 	"reflect"
 
 	restful "github.com/emicklei/go-restful"
@@ -11,12 +10,7 @@ import (
 func buildDefinitions(ws *restful.WebService, cfg Config) (definitions spec.Definitions) {
 	definitions = spec.Definitions{}
 	for _, each := range ws.Routes() {
-		val, hasMetadataApiIgnore := each.Metadata[MetadataApiIgnore]
-		if !hasMetadataApiIgnore || !val.(bool) {
-			addDefinitionsFromRouteTo(each, cfg, definitions)
-		} else {
-			log.Printf("Api ignore: %v %v", each.Method, each.Path)
-		}
+		addDefinitionsFromRouteTo(each, cfg, definitions)
 	}
 	return
 }
