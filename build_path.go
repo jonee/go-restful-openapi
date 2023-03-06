@@ -1,6 +1,7 @@
 package restfulspec
 
 import (
+	"log"
 	"net/http"
 	"reflect"
 	"regexp"
@@ -17,12 +18,17 @@ const KeyOpenAPITags = "openapi.tags"
 func buildPaths(ws *restful.WebService, cfg Config) spec.Paths {
 	p := spec.Paths{Paths: map[string]spec.PathItem{}}
 	for _, each := range ws.Routes() {
-		path, patterns := sanitizePath(each.Path)
-		existingPathItem, ok := p.Paths[path]
-		if !ok {
-			existingPathItem = spec.PathItem{}
+		val, hasMetadataApiIgnore := each.Metadata[MetadataApiIgnore]
+		if !hasMetadataApiIgnore || !val.(bool) {
+			path, patterns := sanitizePath(each.Path)
+			existingPathItem, ok := p.Paths[path]
+			if !ok {
+				existingPathItem = spec.PathItem{}
+			}
+			p.Paths[path] = buildPathItem(ws, each, existingPathItem, patterns, cfg)
+		} else {
+			log.Printf("Api ignore: %v %v", each.Method, each.Path)
 		}
-		p.Paths[path] = buildPathItem(ws, each, existingPathItem, patterns, cfg)
 	}
 	return p
 }

@@ -5,6 +5,8 @@ import (
 	"github.com/go-openapi/spec"
 )
 
+const MetadataApiIgnore = "ApiIgnore"
+
 // NewOpenAPIService returns a new WebService that provides the API documentation of all services
 // conform the OpenAPI documentation specifcation.
 func NewOpenAPIService(config Config) *restful.WebService {
